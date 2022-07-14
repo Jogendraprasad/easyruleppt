@@ -28,8 +28,9 @@ public class RulesHelper {
         switch (ruleDefinitionGroup.getRuleDefinitionGroupOperator()) {
             case AND: {
                 UnitRuleGroup unitRuleGroup = new UnitRuleGroup();
-                unitRuleGroup.addRule(createRule(ruleDefinitionGroup.getRuleDefinitionFirst()));
-                unitRuleGroup.addRule(createRule(ruleDefinitionGroup.getRuleDefinitionSecond()));
+                ruleDefinitionGroup.getRuleDefinitions().stream().forEach(ruleDefinition -> {
+                    unitRuleGroup.addRule(createRule(ruleDefinition));
+                });
 
                 Rules rules = new Rules();
                 rules.register(unitRuleGroup);

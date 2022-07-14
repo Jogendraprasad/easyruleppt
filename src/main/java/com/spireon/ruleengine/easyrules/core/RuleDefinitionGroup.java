@@ -1,25 +1,19 @@
 package com.spireon.ruleengine.easyrules.core;
 
+import java.util.List;
+
 public class RuleDefinitionGroup {
 
-    RuleDefinition ruleDefinitionFirst;
-    RuleDefinition ruleDefinitionSecond;
-    RuleDefinitionGroupOperator ruleDefinitionGroupOperator;
+    List<RuleDefinition> ruleDefinitions;
 
-    public RuleDefinition getRuleDefinitionFirst() {
-        return ruleDefinitionFirst;
+    private RuleDefinitionGroupOperator ruleDefinitionGroupOperator;
+
+    public List<RuleDefinition> getRuleDefinitions() {
+        return ruleDefinitions;
     }
 
-    public void setRuleDefinitionFirst(RuleDefinition ruleDefinitionFirst) {
-        this.ruleDefinitionFirst = ruleDefinitionFirst;
-    }
-
-    public RuleDefinition getRuleDefinitionSecond() {
-        return ruleDefinitionSecond;
-    }
-
-    public void setRuleDefinitionSecond(RuleDefinition ruleDefinitionSecond) {
-        this.ruleDefinitionSecond = ruleDefinitionSecond;
+    public void setRuleDefinitions(List<RuleDefinition> ruleDefinitions) {
+        this.ruleDefinitions = ruleDefinitions;
     }
 
     public RuleDefinitionGroupOperator getRuleDefinitionGroupOperator() {
@@ -33,8 +27,7 @@ public class RuleDefinitionGroup {
     @Override
     public String toString() {
         return "RuleDefinitionGroup{" +
-                "ruleDefinitionFirst=" + ruleDefinitionFirst +
-                ", ruleDefinitionSecond=" + ruleDefinitionSecond +
+                "ruleDefinitions=" + ruleDefinitions +
                 ", ruleDefinitionGroupOperator=" + ruleDefinitionGroupOperator +
                 '}';
     }

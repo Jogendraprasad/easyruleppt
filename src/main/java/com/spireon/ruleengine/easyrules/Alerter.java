@@ -52,8 +52,10 @@ public class Alerter {
                 "telemetryEvent"
         );
         RuleDefinitionGroup ruleDefinitionGroup = new RuleDefinitionGroup();
-        ruleDefinitionGroup.setRuleDefinitionFirst(ruleDefinitionFirst);
-        ruleDefinitionGroup.setRuleDefinitionSecond(ruleDefinitionSecond);
+        List<RuleDefinition> ruleDefinitions = new ArrayList<>();
+        ruleDefinitions.add(ruleDefinitionFirst);
+        ruleDefinitions.add(ruleDefinitionSecond);
+        ruleDefinitionGroup.setRuleDefinitions(ruleDefinitions);
         ruleDefinitionGroup.setRuleDefinitionGroupOperator(RuleDefinitionGroupOperator.AND);
 
         Rules rules = RulesHelper.getInstance().createRules(ruleDefinitionGroup);
