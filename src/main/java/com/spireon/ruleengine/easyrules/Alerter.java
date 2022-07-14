@@ -33,7 +33,7 @@ public class Alerter {
                 "Speed Rule",
                 "Detects speed violations",
                 "MovementSegment.Speed",
-                "50.5",
+                "50.6",
                 ValueType.DOUBLE,
                 Operator.GREATER_THAN,
                 "telemetryEvent"
@@ -56,19 +56,19 @@ public class Alerter {
         ruleDefinitionGroup.setRuleDefinitionSecond(ruleDefinitionSecond);
         ruleDefinitionGroup.setRuleDefinitionGroupOperator(RuleDefinitionGroupOperator.AND);
 
-        Rules rules = RuleCreatorImpl.createRules(ruleDefinitionGroup);
+        Rules rules = RulesHelper.getInstance().createRules(ruleDefinitionGroup);
         System.out.println("Create rule successfully " + rules);
 
         //Event Object
         TelemetryEvent telemetryEvent = new TelemetryEvent();
         MovementSegment movementSegment = new MovementSegment();
-        movementSegment.setSpeed("50.3");
+        movementSegment.setSpeed("50.9");
         telemetryEvent.setMovementSegment(movementSegment);
 
         LocationSegment locationSegment = new LocationSegment();
         List<String> locations = new ArrayList<>();
         locations.add("landmark-3");
-        locations.add("landmark-4");
+        locations.add("landmark-1");
 
         locationSegment.setLocations(locations);
 
@@ -94,9 +94,8 @@ public class Alerter {
                 Operator.GREATER_THAN,
                 "telemetryEvent"
         );
-        Rules rules = RuleCreatorImpl.createRules(ruleDefinition);
+        Rules rules = RulesHelper.getInstance().createRules(ruleDefinition);
         System.out.println("Create rule successfully " + rules);
-//        Rules rules = new Rules(rule);
 
         //Event Object
         TelemetryEvent telemetryEvent = new TelemetryEvent();

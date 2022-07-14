@@ -9,16 +9,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class RuleCreatorImpl {
+public class RulesHelper {
+
+    private static final RulesHelper rulesHelper = new RulesHelper();
+
+    public static RulesHelper getInstance() {
+        return rulesHelper;
+    }
 
 
-    public static Rules createRules(RuleDefinition ruleDefinition) {
+    public Rules createRules(RuleDefinition ruleDefinition) {
         Rules rules = new Rules();
         rules.register(createRule(ruleDefinition));
         return rules;
     }
 
-    public static Rules createRules(RuleDefinitionGroup ruleDefinitionGroup) {
+    public Rules createRules(RuleDefinitionGroup ruleDefinitionGroup) {
         switch (ruleDefinitionGroup.getRuleDefinitionGroupOperator()) {
             case AND: {
                 UnitRuleGroup unitRuleGroup = new UnitRuleGroup();
@@ -34,8 +40,7 @@ public class RuleCreatorImpl {
 
     }
 
-    //    @Override
-    private static Rule createRule(RuleDefinition ruleDefinition) {
+    private Rule createRule(RuleDefinition ruleDefinition) {
         return new RuleBuilder()
                 .name(ruleDefinition.getName())
                 .description(ruleDefinition.getDescription())
@@ -44,8 +49,7 @@ public class RuleCreatorImpl {
                 .build();
     }
 
-    //    @Override
-    private static Condition createCondition(RuleDefinition ruleDefinition) {
+    private Condition createCondition(RuleDefinition ruleDefinition) {
 
         return new Condition() {
             @Override
@@ -95,8 +99,7 @@ public class RuleCreatorImpl {
         };
     }
 
-    //    @Override
-    private static Action createAction(RuleDefinition ruleDefinition) {
+    private Action createAction(RuleDefinition ruleDefinition) {
         return new Action() {
             @Override
             public void execute(Facts facts) throws Exception {
@@ -110,7 +113,7 @@ public class RuleCreatorImpl {
         };
     }
 
-    private static Object getPropertyValue(TelemetryEvent telemetryEvent, String property) {
+    private Object getPropertyValue(TelemetryEvent telemetryEvent, String property) {
         System.out.println("Get Property Value - " + property + " on " + telemetryEvent.getClass());
         Object object = telemetryEvent;
         for (String prop : property.split("\\.")) {
@@ -120,7 +123,7 @@ public class RuleCreatorImpl {
 
     }
 
-    private static Object getValue(Object object, String property) {
+    private Object getValue(Object object, String property) {
         System.out.println("calling " + property + " on " + object.getClass());
 
         try {
@@ -132,9 +135,8 @@ public class RuleCreatorImpl {
     }
 
 
-    private static TelemetryEvent getTelemetryEventObject(RuleDefinition ruleDefinition, Facts facts) {
+    private TelemetryEvent getTelemetryEventObject(RuleDefinition ruleDefinition, Facts facts) {
         return facts.get(ruleDefinition.getEventObjectName());
     }
-
 
 }
