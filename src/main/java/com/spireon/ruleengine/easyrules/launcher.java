@@ -135,7 +135,7 @@ public class launcher {
        // rules.register(unitr1);
         //rules.register(unitr2);
         rules.register(rule3big);
-        rules.register(rule4big);
+//        rules.register(rule4big);
         //rules.register(condrule);*/
        // rules.register(amt);
 
