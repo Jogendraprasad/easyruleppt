@@ -1,4 +1,4 @@
-package org.jeasy.rules.tutorials.spireontutorial;
+package com.spireon.ruleengine.easyrules;
 
 public class Dataclass {
 

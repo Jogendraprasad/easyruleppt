@@ -1,8 +1,7 @@
-package org.jeasy.rules.tutorials.spireontutorial;
+package com.spireon.ruleengine.easyrules;
 import org.jeasy.rules.api.*;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.core.RuleBuilder;
-import org.jeasy.rules.mvel.MVELRule;
 import org.jeasy.rules.mvel.MVELRuleFactory;
 import org.jeasy.rules.support.composite.ActivationRuleGroup;
 import org.jeasy.rules.support.composite.ConditionalRuleGroup;
@@ -108,15 +107,15 @@ public class launcher {
         unitr1.addRule(actvrule);
         /*-------------------this for yml file------------------------------------*/
 
-        String filename1 = args.length != 0 ? args[0] :  "./src/main/java/org/jeasy/rules/tutorials/spireontutorial/"+obj1.companyname+"rule1.yml";
-        String filename2 = args.length != 0 ? args[0] :  "./src/main/java/org/jeasy/rules/tutorials/spireontutorial/"+obj1.companyname+"rule2.yml";
+        String filename1 = args.length != 0 ? args[0] :  "./src/main/java/com/spireon/ruleengine/easyrules/"+obj1.companyname+"rule1.yml";
+        String filename2 = args.length != 0 ? args[0] :  "./src/main/java/com/spireon/ruleengine/easyrules/"+obj1.companyname+"rule2.yml";
         MVELRuleFactory ruleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
         Rules rules1 = ruleFactory.createRules(new FileReader(filename1));
         Rules rules2= ruleFactory.createRules(new FileReader(filename2));
 
 
-        String filename3 = args.length != 0 ? args[0] :  "./src/main/java/org/jeasy/rules/tutorials/spireontutorial/"+obj1.companyname+"rule3.yml";
-        String filename4 = args.length != 0 ? args[0] :  "./src/main/java/org/jeasy/rules/tutorials/spireontutorial/"+obj1.companyname+"rule4.yml";
+        String filename3 = args.length != 0 ? args[0] :  "./src/main/java/com/spireon/ruleengine/easyrules/"+obj1.companyname+"rule3.yml";
+        String filename4 = args.length != 0 ? args[0] :  "./src/main/java/com/spireon/ruleengine/easyrules/"+obj1.companyname+"rule4.yml";
         Rule rule3big  = ruleFactory.createRule(new FileReader(filename3));
         Rule rule4big  = ruleFactory.createRule(new FileReader(filename4));
         UnitRuleGroup unitr2 = new UnitRuleGroup("unitr2","comp");

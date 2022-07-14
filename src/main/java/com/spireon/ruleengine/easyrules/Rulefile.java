@@ -1,4 +1,4 @@
-package org.jeasy.rules.tutorials.spireontutorial;
+package com.spireon.ruleengine.easyrules;
 
 import org.jeasy.rules.annotation.Action;
 import org.jeasy.rules.annotation.Condition;
