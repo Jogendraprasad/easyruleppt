@@ -4,6 +4,7 @@ import com.spireon.ruleengine.easyrules.core.*;
 import com.spireon.ruleengine.easyrules.core.event.LocationSegment;
 import com.spireon.ruleengine.easyrules.core.event.MovementSegment;
 import com.spireon.ruleengine.easyrules.core.event.TelemetryEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
@@ -12,6 +13,8 @@ import org.jeasy.rules.core.DefaultRulesEngine;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Slf4j
 public class Alerter {
 
     public static void main(String[] args) {

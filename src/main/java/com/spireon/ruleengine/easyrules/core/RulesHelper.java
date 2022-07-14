@@ -1,6 +1,7 @@
 package com.spireon.ruleengine.easyrules.core;
 
 import com.spireon.ruleengine.easyrules.core.event.TelemetryEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.jeasy.rules.api.*;
 import org.jeasy.rules.core.RuleBuilder;
 import org.jeasy.rules.support.composite.UnitRuleGroup;
@@ -9,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+@Slf4j
 public class RulesHelper {
 
     private static final RulesHelper rulesHelper = new RulesHelper();
@@ -62,9 +64,10 @@ public class RulesHelper {
                 Operator operator = ruleDefinition.getOperator();
 
                 Object propertyValue = getPropertyValue(telemetryEvent, property);
-                System.out.println("property value is " + propertyValue);
-                System.out.println("valueType is " + valueType);
-                System.out.println("operator is " + operator);
+
+                log.info("property value is {}" , propertyValue);
+                log.info("valueType is {}" , valueType);
+                log.info("operator is {}" , operator);
 
                 switch (valueType) {
                     case DOUBLE: {
@@ -81,7 +84,7 @@ public class RulesHelper {
                                 List<String> b = (List<String>) propertyValue;
                                 for (String aa : a) {
                                     for (String bb : b) {
-                                        System.out.println("comparing " + aa + " and " + bb);
+                                        log.info("comparing {} and {}",aa , bb);
                                         if (aa.equals(bb)) {
                                             return true;
                                         }
@@ -109,13 +112,13 @@ public class RulesHelper {
                         .append(ruleDefinition.toString())
                         .append("on Telemetry object ")
                         .append(getTelemetryEventObject(ruleDefinition, facts));
-                System.out.println("" + sb);
+                log.info("ACTION - {}" , sb.toString());
             }
         };
     }
 
     private Object getPropertyValue(TelemetryEvent telemetryEvent, String property) {
-        System.out.println("Get Property Value - " + property + " on " + telemetryEvent.getClass());
+        log.info("Get Property Value - {} on {}" , property , telemetryEvent.getClass());
         Object object = telemetryEvent;
         for (String prop : property.split("\\.")) {
             object = getValue(object, "get" + prop);
@@ -125,7 +128,7 @@ public class RulesHelper {
     }
 
     private Object getValue(Object object, String property) {
-        System.out.println("calling " + property + " on " + object.getClass());
+        log.info("calling {} on {}" , property , object.getClass());
 
         try {
             Method method = object.getClass().getDeclaredMethod(property);
