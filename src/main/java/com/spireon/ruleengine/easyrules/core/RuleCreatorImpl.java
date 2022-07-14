@@ -1,30 +1,41 @@
 package com.spireon.ruleengine.easyrules.core;
 
 import com.spireon.ruleengine.easyrules.core.event.TelemetryEvent;
-import org.jeasy.rules.api.Action;
-import org.jeasy.rules.api.Condition;
-import org.jeasy.rules.api.Facts;
-import org.jeasy.rules.api.Rule;
+import org.jeasy.rules.api.*;
 import org.jeasy.rules.core.RuleBuilder;
+import org.jeasy.rules.support.composite.UnitRuleGroup;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.List;
 
-public class RuleCreatorImpl implements RuleCreator{
-    RuleDefinition ruleDefinition;
-    public RuleCreatorImpl(RuleDefinition ruleDefinition){
-        this.ruleDefinition = ruleDefinition;
+public class RuleCreatorImpl {
+
+
+    public static Rules createRules(RuleDefinition ruleDefinition) {
+        Rules rules = new Rules();
+        rules.register(createRule(ruleDefinition));
+        return rules;
+    }
+
+    public static Rules createRules(RuleDefinitionGroup ruleDefinitionGroup) {
+        switch (ruleDefinitionGroup.getRuleDefinitionGroupOperator()) {
+            case AND: {
+                UnitRuleGroup unitRuleGroup = new UnitRuleGroup();
+                unitRuleGroup.addRule(createRule(ruleDefinitionGroup.getRuleDefinitionFirst()));
+                unitRuleGroup.addRule(createRule(ruleDefinitionGroup.getRuleDefinitionSecond()));
+
+                Rules rules = new Rules();
+                rules.register(unitRuleGroup);
+                return rules;
+            }
+        }
+        throw new IllegalStateException("RuleDefinitionGroup operator " + ruleDefinitionGroup.getRuleDefinitionGroupOperator() + " is not handled");
 
     }
 
-    @Override
-    public Rule createRule() {
-        return createRule(ruleDefinition);
-    }
-
-//    @Override
-    public Rule createRule(RuleDefinition ruleDefinition) {
+    //    @Override
+    private static Rule createRule(RuleDefinition ruleDefinition) {
         return new RuleBuilder()
                 .name(ruleDefinition.getName())
                 .description(ruleDefinition.getDescription())
@@ -33,37 +44,59 @@ public class RuleCreatorImpl implements RuleCreator{
                 .build();
     }
 
-//    @Override
-    public Condition createCondition(RuleDefinition ruleDefinition) {
+    //    @Override
+    private static Condition createCondition(RuleDefinition ruleDefinition) {
 
         return new Condition() {
             @Override
             public boolean evaluate(Facts facts) {
-                TelemetryEvent telemetryEvent  = getTelemetryEventObject(ruleDefinition, facts);
+                TelemetryEvent telemetryEvent = getTelemetryEventObject(ruleDefinition, facts);
                 String property = ruleDefinition.getProperty();
-                String value = ruleDefinition.getValue();
+                Object value = ruleDefinition.getValue();
                 ValueType valueType = ruleDefinition.getValueType();
                 Operator operator = ruleDefinition.getOperator();
 
-                String propertyValue = getPropertyValue(telemetryEvent, property);
-                switch (valueType){
-                    case DOUBLE : {
-                        double d = Double.parseDouble(propertyValue);
-                        switch (operator){
+                Object propertyValue = getPropertyValue(telemetryEvent, property);
+                System.out.println("property value is " + propertyValue);
+                System.out.println("valueType is " + valueType);
+                System.out.println("operator is " + operator);
+
+                switch (valueType) {
+                    case DOUBLE: {
+                        double d = Double.parseDouble((String) propertyValue);
+                        switch (operator) {
                             case GREATER_THAN:
-                                return d > Double.parseDouble(value);
+                                return d > Double.parseDouble((String) value);
+                        }
+                    }
+                    case List: {
+                        switch (operator) {
+                            case IN_LIST_OF_STRING: {
+                                List<String> a = (List<String>) value;
+                                List<String> b = (List<String>) propertyValue;
+                                for (String aa : a) {
+                                    for (String bb : b) {
+                                        System.out.println("comparing " + aa + " and " + bb);
+                                        if (aa.equals(bb)) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                                return false;
+
+                            }
                         }
                     }
 
                 }
 
-                throw new IllegalStateException("not handled for "+ruleDefinition);
+                throw new IllegalStateException("not handled for " + valueType + " in " + ruleDefinition);
             }
         };
     }
 
-//    @Override
-    public Action createAction(RuleDefinition ruleDefinition) {
+    //    @Override
+    private static Action createAction(RuleDefinition ruleDefinition) {
         return new Action() {
             @Override
             public void execute(Facts facts) throws Exception {
@@ -72,23 +105,23 @@ public class RuleCreatorImpl implements RuleCreator{
                         .append(ruleDefinition.toString())
                         .append("on Telemetry object ")
                         .append(getTelemetryEventObject(ruleDefinition, facts));
-                System.out.println(""+sb.toString());
+                System.out.println("" + sb);
             }
         };
     }
 
-    private String getPropertyValue(TelemetryEvent telemetryEvent, String property){
-        System.out.println("Get Property Value - "+property+" on "+telemetryEvent.getClass());
+    private static Object getPropertyValue(TelemetryEvent telemetryEvent, String property) {
+        System.out.println("Get Property Value - " + property + " on " + telemetryEvent.getClass());
         Object object = telemetryEvent;
         for (String prop : property.split("\\.")) {
-            object = getValue(object, "get"+prop);
+            object = getValue(object, "get" + prop);
         }
-        return (String)object;
+        return object;
 
     }
 
-    private Object getValue(Object object, String property){
-        System.out.println("calling "+property+" on "+object.getClass());
+    private static Object getValue(Object object, String property) {
+        System.out.println("calling " + property + " on " + object.getClass());
 
         try {
             Method method = object.getClass().getDeclaredMethod(property);
@@ -99,8 +132,8 @@ public class RuleCreatorImpl implements RuleCreator{
     }
 
 
-    private TelemetryEvent getTelemetryEventObject(RuleDefinition ruleDefinition, Facts facts){
-        return (TelemetryEvent) facts.get(ruleDefinition.getEventObjectName());
+    private static TelemetryEvent getTelemetryEventObject(RuleDefinition ruleDefinition, Facts facts) {
+        return facts.get(ruleDefinition.getEventObjectName());
     }
 
 

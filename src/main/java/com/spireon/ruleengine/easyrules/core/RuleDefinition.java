@@ -5,7 +5,7 @@ public class RuleDefinition {
     private String name;
     private String description;
     private String property;
-    private String value;
+    private Object value; // for landmarks it could be list of string
     private ValueType valueType;
     private Operator operator;
 
@@ -14,10 +14,10 @@ public class RuleDefinition {
     public RuleDefinition(String name,
                           String description,
                           String property,
-                          String value,
+                          Object value,
                           ValueType valueType,
                           Operator operator,
-                          String eventObjectName){
+                          String eventObjectName) {
         this.name = name;
         this.description = description;
         this.property = property;
@@ -26,7 +26,9 @@ public class RuleDefinition {
         this.operator = operator;
         this.eventObjectName = eventObjectName;
     }
-    public RuleDefinition(){}
+
+    public RuleDefinition() {
+    }
 
     public String getName() {
         return name;
@@ -52,11 +54,11 @@ public class RuleDefinition {
         this.property = property;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
