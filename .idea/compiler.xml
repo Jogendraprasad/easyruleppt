@@ -16,12 +16,14 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" />
         </processorPath>
         <module name="easy-rules-tutorials" />
+        <module name="rule-engine-easy-rules" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="easy-rules-tutorials" options="-verbose -Xlint:unchecked" />
+      <module name="rule-engine-easy-rules" options="-verbose -Xlint:unchecked" />
     </option>
   </component>
 </project>
