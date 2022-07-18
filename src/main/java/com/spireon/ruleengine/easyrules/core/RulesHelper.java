@@ -75,6 +75,21 @@ public class RulesHelper {
                         switch (operator) {
                             case GREATER_THAN:
                                 return d > Double.parseDouble((String) value);
+                            case LESS_THAN:
+                                return d < Double.parseDouble((String) value);
+                            case LESS_THAN_OR_EQUAL:
+                                return d <= Double.parseDouble((String) value);
+                        }
+                    }
+                    case INTEGER: {
+                        int d = Integer.parseInt((String) propertyValue);
+                        switch (operator) {
+                            case GREATER_THAN:
+                                return d > Integer.parseInt((String) value);
+                            case LESS_THAN:
+                                return d < Integer.parseInt((String) value);
+                            case LESS_THAN_OR_EQUAL:
+                                return d <= Integer.parseInt((String) value);
                         }
                     }
                     case List: {
@@ -91,13 +106,10 @@ public class RulesHelper {
                                     }
                                 }
                                 return false;
-
                             }
                         }
                     }
-
                 }
-
                 throw new IllegalStateException("not handled for " + valueType + " in " + ruleDefinition);
             }
         };
