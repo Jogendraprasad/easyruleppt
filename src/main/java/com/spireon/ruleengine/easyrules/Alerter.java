@@ -14,6 +14,7 @@ import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -82,12 +83,8 @@ public class Alerter {
                 Operator.IN_LIST_OF_STRING,
                 "telemetryEvent"
         );
-        RuleDefinitionGroup ruleDefinitionGroup = new RuleDefinitionGroup();
-        List<RuleDefinition> ruleDefinitions = new ArrayList<>();
-        ruleDefinitions.add(ruleDefinitionFirst);
-        ruleDefinitions.add(ruleDefinitionSecond);
-        ruleDefinitionGroup.setRuleDefinitions(ruleDefinitions);
-        ruleDefinitionGroup.setRuleDefinitionGroupOperator(RuleDefinitionGroupOperator.AND);
+
+        RuleDefinitionGroup ruleDefinitionGroup = createRuleDefinitionGroup(ruleDefinitionFirst, ruleDefinitionSecond);
 
         Rules rules = RulesHelper.getInstance().createRules(ruleDefinitionGroup);
         log.info("Create rule successfully - {}" , rules);
@@ -116,6 +113,16 @@ public class Alerter {
         rulesEngine.fire(rules, facts);
     }
 
+    private RuleDefinitionGroup createRuleDefinitionGroup(RuleDefinition... ruleDefinitions){
+        RuleDefinitionGroup ruleDefinitionGroup = new RuleDefinitionGroup();
+        ruleDefinitionGroup.setRuleDefinitionGroupOperator(RuleDefinitionGroupOperator.AND);
+        Arrays.stream(ruleDefinitions).forEach( ruleDefinition -> {
+            ruleDefinitionGroup.getRuleDefinitions().add(ruleDefinition);
+        });
+        return ruleDefinitionGroup;
+    }
+
+
     private void ruleDefinition() {
 
         //INPUT Starts ===================
@@ -134,7 +141,7 @@ public class Alerter {
 
         TelemetryEvent telemetryEvent = new TelemetryEvent();
         MovementSegment movementSegment = new MovementSegment();
-        movementSegment.setSpeed("50.6");
+        movementSegment.setSpeed("50.9");
         telemetryEvent.setMovementSegment(movementSegment);
 
         Facts facts = new Facts();
@@ -143,7 +150,7 @@ public class Alerter {
         //INPUT Ends ============================
 
 
-        Rules rules = RulesHelper.getInstance().createRules(ruleDefinition);
+        Rules rules = RulesHelper.getInstance().createRules(createRuleDefinitionGroup(ruleDefinition));
         log.info("Create rule successfully - {}" , rules);
 
         //Fire rules with facts

@@ -20,11 +20,11 @@ public class RulesHelper {
     }
 
 
-    public Rules createRules(RuleDefinition ruleDefinition) {
-        Rules rules = new Rules();
-        rules.register(createRule(ruleDefinition));
-        return rules;
-    }
+//    public Rules createRules(RuleDefinition ruleDefinition) {
+//        Rules rules = new Rules();
+//        rules.register(createRule(ruleDefinition));
+//        return rules;
+//    }
 
     public Rules createRules(RuleDefinitionGroup ruleDefinitionGroup) {
         switch (ruleDefinitionGroup.getRuleDefinitionGroupOperator()) {
