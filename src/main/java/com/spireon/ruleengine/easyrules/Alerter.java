@@ -4,13 +4,13 @@ import com.spireon.platform.alerting.cdm.dto.alertconfig.LandmarkFilter;
 import com.spireon.platform.alerting.cdm.dto.alertconfig.LandmarkFilterOperator;
 import com.spireon.platform.alerting.cdm.dto.alertconfig.fleet.AlertTypeFleetSpeedThresholdConfig;
 import com.spireon.ruleengine.easyrules.core.*;
+import com.spireon.ruleengine.easyrules.core.event.EnhancedRules;
 import com.spireon.ruleengine.easyrules.core.event.LocationSegment;
 import com.spireon.ruleengine.easyrules.core.event.MovementSegment;
 import com.spireon.ruleengine.easyrules.core.event.TelemetryEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
-import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class Alerter {
 
     }
 
-    private void executeFleetSpeedThreshold(){
+    private void executeFleetSpeedThreshold() {
         AlertTypeFleetSpeedThresholdConfig alertTypeFleetSpeedThresholdConfig = new AlertTypeFleetSpeedThresholdConfig();
         alertTypeFleetSpeedThresholdConfig.setSpeedThresholdMPH("40");
 
@@ -87,7 +87,7 @@ public class Alerter {
         RuleDefinitionGroup ruleDefinitionGroup = createRuleDefinitionGroup(ruleDefinitionFirst, ruleDefinitionSecond);
 
         Rules rules = RulesHelper.getInstance().createRules(ruleDefinitionGroup);
-        log.info("Create rule successfully - {}" , rules);
+        log.info("Create rule successfully - {}", rules);
 
         //Event Object
         TelemetryEvent telemetryEvent = new TelemetryEvent();
@@ -108,15 +108,20 @@ public class Alerter {
         facts.put("telemetryEvent", telemetryEvent);
 
         //Fire rules with facts
-        RulesEngine rulesEngine = new DefaultRulesEngine();
+        DefaultRulesEngine rulesEngine = new DefaultRulesEngine();
+        rulesEngine.registerRuleListener(((EnhancedRules) rules).getRuleListener());
 
         rulesEngine.fire(rules, facts);
     }
 
-    private RuleDefinitionGroup createRuleDefinitionGroup(RuleDefinition... ruleDefinitions){
+    private RuleDefinitionGroup createRuleDefinitionGroup(RuleDefinition... ruleDefinitions) {
+        return createRuleDefinitionGroup(RuleDefinitionGroupOperator.AND, ruleDefinitions);
+    }
+
+    private RuleDefinitionGroup createRuleDefinitionGroup(RuleDefinitionGroupOperator ruleDefinitionGroupOperator, RuleDefinition... ruleDefinitions) {
         RuleDefinitionGroup ruleDefinitionGroup = new RuleDefinitionGroup();
-        ruleDefinitionGroup.setRuleDefinitionGroupOperator(RuleDefinitionGroupOperator.AND);
-        Arrays.stream(ruleDefinitions).forEach( ruleDefinition -> {
+        ruleDefinitionGroup.setRuleDefinitionGroupOperator(ruleDefinitionGroupOperator);
+        Arrays.stream(ruleDefinitions).forEach(ruleDefinition -> {
             ruleDefinitionGroup.getRuleDefinitions().add(ruleDefinition);
         });
         return ruleDefinitionGroup;
@@ -151,10 +156,11 @@ public class Alerter {
 
 
         Rules rules = RulesHelper.getInstance().createRules(createRuleDefinitionGroup(ruleDefinition));
-        log.info("Create rule successfully - {}" , rules);
+        log.info("Create rule successfully - {}", rules);
 
         //Fire rules with facts
-        RulesEngine rulesEngine = new DefaultRulesEngine();
+        DefaultRulesEngine rulesEngine = new DefaultRulesEngine();
+        rulesEngine.registerRuleListener(((EnhancedRules) rules).getRuleListener());
 
         rulesEngine.fire(rules, facts);
     }
