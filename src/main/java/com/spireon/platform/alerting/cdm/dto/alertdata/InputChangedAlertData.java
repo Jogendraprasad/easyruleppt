@@ -56,7 +56,7 @@ public class InputChangedAlertData extends AlertData {
         INPUT5,
         INPUT6,
         INPUT7,
-        INPUT8;
+        INPUT8
     }
 
     public enum InputStatus {

@@ -12,7 +12,7 @@ public abstract class BaseConfig {
 
     String timezone;
     String alertColor;
-//    String[] queryFields; // This is un-supported in PlatformApi
+    //    String[] queryFields; // This is un-supported in PlatformApi
     private List<LandmarkFilter> selectedLandmarkFilters;
 
 }

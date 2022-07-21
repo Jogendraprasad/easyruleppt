@@ -1,16 +1,20 @@
 package com.spireon.ruleengine.easyrules;
 
+import com.spireon.platform.alerting.cdm.dto.alertconfig.LandmarkFilter;
+import com.spireon.platform.alerting.cdm.dto.alertconfig.LandmarkFilterOperator;
+import com.spireon.platform.alerting.cdm.dto.alertconfig.fleet.AlertTypeFleetSpeedThresholdConfig;
 import com.spireon.ruleengine.easyrules.core.*;
+import com.spireon.ruleengine.easyrules.core.event.EnhancedRules;
 import com.spireon.ruleengine.easyrules.core.event.LocationSegment;
 import com.spireon.ruleengine.easyrules.core.event.MovementSegment;
 import com.spireon.ruleengine.easyrules.core.event.TelemetryEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
-import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -24,9 +28,34 @@ public class Alerter {
 
     private void start() {
 
-//        ruleDefinition();
+        ruleDefinition();
 
-        ruleDefinitionGroup();
+//        ruleDefinitionGroup();
+
+    }
+
+    private void executeFleetSpeedThreshold() {
+        AlertTypeFleetSpeedThresholdConfig alertTypeFleetSpeedThresholdConfig = new AlertTypeFleetSpeedThresholdConfig();
+        alertTypeFleetSpeedThresholdConfig.setSpeedThresholdMPH("40");
+
+        LandmarkFilter landmarkFilter = new LandmarkFilter();
+        landmarkFilter.setProperty("landmarkid");
+        landmarkFilter.setOperator(LandmarkFilterOperator.in);
+        landmarkFilter.setValue(List.of("landmark-1"));
+        alertTypeFleetSpeedThresholdConfig.setSelectedLandmarkFilters(List.of(landmarkFilter));
+
+        /**
+         * TODO - Convert BaseConfig to RuleDefinitions
+         *
+         * We have alertType code as one of the input.
+         * based on the alertTypeCode we could map the Config object.
+         * Iterate all the properties of the Config object and where we have non null values, put these into RuleDefinition.
+         *
+         * How to map configuration property name with RuleDefinition property and from where to pull Value?
+         *      Will we have another mapping for this????
+         *
+         * */
+
 
     }
 
@@ -54,15 +83,11 @@ public class Alerter {
                 Operator.IN_LIST_OF_STRING,
                 "telemetryEvent"
         );
-        RuleDefinitionGroup ruleDefinitionGroup = new RuleDefinitionGroup();
-        List<RuleDefinition> ruleDefinitions = new ArrayList<>();
-        ruleDefinitions.add(ruleDefinitionFirst);
-        ruleDefinitions.add(ruleDefinitionSecond);
-        ruleDefinitionGroup.setRuleDefinitions(ruleDefinitions);
-        ruleDefinitionGroup.setRuleDefinitionGroupOperator(RuleDefinitionGroupOperator.AND);
+
+        RuleDefinitionGroup ruleDefinitionGroup = createRuleDefinitionGroup(ruleDefinitionFirst, ruleDefinitionSecond);
 
         Rules rules = RulesHelper.getInstance().createRules(ruleDefinitionGroup);
-        System.out.println("Create rule successfully " + rules);
+        log.info("Create rule successfully - {}", rules);
 
         //Event Object
         TelemetryEvent telemetryEvent = new TelemetryEvent();
@@ -83,12 +108,29 @@ public class Alerter {
         facts.put("telemetryEvent", telemetryEvent);
 
         //Fire rules with facts
-        RulesEngine rulesEngine = new DefaultRulesEngine();
+        DefaultRulesEngine rulesEngine = new DefaultRulesEngine();
+        rulesEngine.registerRuleListener(((EnhancedRules) rules).getRuleListener());
 
         rulesEngine.fire(rules, facts);
     }
 
+    private RuleDefinitionGroup createRuleDefinitionGroup(RuleDefinition... ruleDefinitions) {
+        return createRuleDefinitionGroup(RuleDefinitionGroupOperator.AND, ruleDefinitions);
+    }
+
+    private RuleDefinitionGroup createRuleDefinitionGroup(RuleDefinitionGroupOperator ruleDefinitionGroupOperator, RuleDefinition... ruleDefinitions) {
+        RuleDefinitionGroup ruleDefinitionGroup = new RuleDefinitionGroup();
+        ruleDefinitionGroup.setRuleDefinitionGroupOperator(ruleDefinitionGroupOperator);
+        Arrays.stream(ruleDefinitions).forEach(ruleDefinition -> {
+            ruleDefinitionGroup.getRuleDefinitions().add(ruleDefinition);
+        });
+        return ruleDefinitionGroup;
+    }
+
+
     private void ruleDefinition() {
+
+        //INPUT Starts ===================
         //Rule Object
         RuleDefinition ruleDefinition = new RuleDefinition(
                 "Speed Rule",
@@ -99,20 +141,26 @@ public class Alerter {
                 Operator.GREATER_THAN,
                 "telemetryEvent"
         );
-        Rules rules = RulesHelper.getInstance().createRules(ruleDefinition);
-        System.out.println("Create rule successfully " + rules);
 
         //Event Object
+
         TelemetryEvent telemetryEvent = new TelemetryEvent();
         MovementSegment movementSegment = new MovementSegment();
-        movementSegment.setSpeed("50.6");
+        movementSegment.setSpeed("50.9");
         telemetryEvent.setMovementSegment(movementSegment);
 
         Facts facts = new Facts();
         facts.put("telemetryEvent", telemetryEvent);
 
+        //INPUT Ends ============================
+
+
+        Rules rules = RulesHelper.getInstance().createRules(createRuleDefinitionGroup(ruleDefinition));
+        log.info("Create rule successfully - {}", rules);
+
         //Fire rules with facts
-        RulesEngine rulesEngine = new DefaultRulesEngine();
+        DefaultRulesEngine rulesEngine = new DefaultRulesEngine();
+        rulesEngine.registerRuleListener(((EnhancedRules) rules).getRuleListener());
 
         rulesEngine.fire(rules, facts);
     }

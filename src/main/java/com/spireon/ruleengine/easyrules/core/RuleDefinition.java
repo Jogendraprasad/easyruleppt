@@ -11,7 +11,6 @@ public class RuleDefinition {
     private Object value; // for landmarks it could be list of string
     private ValueType valueType;
     private Operator operator;
-
     private String eventObjectName;
 
     public RuleDefinition(String name,
