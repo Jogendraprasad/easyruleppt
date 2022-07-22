@@ -1,0 +1,6 @@
+name: "low tyrepressure"
+description: "This is rearding the lowtyrepressure"
+priority: 2
+condition: "telemetryevent.getMovementSegment().gettyrepressure()<40"
+actions:
+  - 'System.out.println(" low tyre pressure");'
