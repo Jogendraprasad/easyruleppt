@@ -5,7 +5,6 @@ public class TelemetryEvent {
     private MovementSegment movementSegment;
     private LocationSegment locationSegment;
 
-
     public String getAssetId() {
         return assetId;
     }

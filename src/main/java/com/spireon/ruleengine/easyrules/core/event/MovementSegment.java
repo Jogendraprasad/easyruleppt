@@ -2,6 +2,7 @@ package com.spireon.ruleengine.easyrules.core.event;
 
 public class MovementSegment {
     private String speed;
+    private Integer tyrepressure;
 
     public String getSpeed() {
         return speed;
@@ -11,10 +12,18 @@ public class MovementSegment {
         this.speed = speed;
     }
 
+    public Integer gettyrepressure() {
+        return tyrepressure;
+    }
+
+    public void settyrepressure(Integer tyrepressure) {
+        this.tyrepressure = tyrepressure;
+    }
+
     @Override
     public String toString() {
         return "MovementSegment{" +
-                "speed='" + speed + '\'' +
+                "speed='" + speed + '\'' + "tyre pressure='" + tyrepressure + '\'' +
                 '}';
     }
 }
